@@ -23,10 +23,18 @@ require('lazy').setup({
       {'neovim/nvim-lspconfig'},             -- Required
 
       -- Autocompletion
-      {'hrsh7th/nvim-cmp'},     -- Required
+      {'hrsh7th/nvim-cmp',
+        dependencies = {
+          {
+            "Saecki/crates.nvim",
+            event = { "BufRead Cargo.toml" },
+            config = true,
+          },
+        },
+      },     -- Required
       {'hrsh7th/cmp-nvim-lsp'}, -- Required
       {'L3MON4D3/LuaSnip'},     -- Required
-    }
+    },
   },
   { "EdenEast/nightfox.nvim" }, -- lazy
   { 'folke/which-key.nvim',  opts = {} },
@@ -95,7 +103,36 @@ require('lazy').setup({
   },
 
   {
-    'p00f/clangd_extensions.nvim'
+    'p00f/clangd_extensions.nvim',
+    lazy = true,
+    config = function() end,
+    opts = {
+      extensions = {
+        inlay_hints = {
+          inline = false,
+        },
+        ast = {
+          --These require codicons (https://github.com/microsoft/vscode-codicons)
+          role_icons = {
+            type = "",
+            declaration = "",
+            expression = "",
+            specifier = "",
+            statement = "",
+            ["template argument"] = "",
+          },
+          kind_icons = {
+            Compound = "",
+            Recovery = "",
+            TranslationUnit = "",
+            PackExpansion = "",
+            TemplateTypeParm = "",
+            TemplateTemplateParm = "",
+            TemplateParamObject = "",
+          },
+        },
+      },
+    },
   },
   {
     "nvim-neo-tree/neo-tree.nvim",
