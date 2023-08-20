@@ -76,7 +76,8 @@ require('lazy').setup({
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      -- Fuzzy Finder Algorithm which requires local dependencies to be built.
+      "debugloop/telescope-undo.nvim",
+            -- Fuzzy Finder Algorithm which requires local dependencies to be built.
       -- Only load if `make` is available. Make sure you have the system
       -- requirements installed.
       {
@@ -89,6 +90,22 @@ require('lazy').setup({
         end,
       },
     },
+    config = function()
+      require("telescope").setup({
+	extensions = {
+	  undo = {
+	    -- telescope-undo.nvim config, see below
+	    side_by_side = true,
+	    layout_strategy = "vertical",
+	    layout_config = {
+	      preview_height = 0.8,
+	    },
+	  },
+	}
+      })
+      require("telescope").load_extension("undo")
+      -- optional: vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
+    end,
   },
   {
     -- Highlight, edit, and navigate code
@@ -211,7 +228,23 @@ require('lazy').setup({
       { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
       { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
     },
-  }
+  },
+  {
+    'mrjones2014/smart-splits.nvim',
+    opts = {
+      ignored_filetypes = { "nofile", "quickfix", "qf", "prompt" },
+      ignored_buftypes = { "nofile" },
+    }
+  },
+  {
+    'stevearc/aerial.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons"
+    },
+  },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -253,6 +286,7 @@ vim.o.shiftwidth = 4
 vim.o.expandtab = true
 
 vim.cmd("colorscheme carbonfox")
+-- vim.o.background = hard
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
