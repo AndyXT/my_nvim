@@ -36,7 +36,9 @@ require('lazy').setup({
       {'L3MON4D3/LuaSnip'},     -- Required
     },
   },
-  { "EdenEast/nightfox.nvim" }, -- lazy
+  { 
+    "EdenEast/nightfox.nvim",
+  }, -- lazy
   { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
@@ -245,6 +247,75 @@ require('lazy').setup({
       "nvim-tree/nvim-web-devicons"
     },
   },
+  {
+    "ggandor/leap.nvim",
+    keys = {
+      { "s", "<Plug>(leap-forward-to)", mode = { "n", "x", "o" }, desc = "Leap forward to" },
+      { "S", "<Plug>(leap-backward-to)", mode = { "n", "x", "o" }, desc = "Leap backward to" },
+      { "x", "<Plug>(leap-forward-till)", mode = { "x", "o" }, desc = "Leap forward till" },
+      { "X", "<Plug>(leap-backward-till)", mode = { "x", "o" }, desc = "Leap backward till" },
+      { "gs", "<Plug>(leap-from-window)", mode = { "n", "x", "o" }, desc = "Leap from window" },
+    },
+    opts = {},
+    init = function() -- https://github.com/ggandor/leap.nvim/issues/70#issuecomment-1521177534
+      vim.api.nvim_create_autocmd("User", {
+        callback = function()
+          vim.cmd.hi("Cursor", "blend=100")
+          vim.opt.guicursor:append { "a:Cursor/lCursor" }
+        end,
+        pattern = "LeapEnter",
+      })
+      vim.api.nvim_create_autocmd("User", {
+        callback = function()
+          vim.cmd.hi("Cursor", "blend=0")
+          vim.opt.guicursor:remove { "a:Cursor/lCursor" }
+        end,
+        pattern = "LeapLeave",
+      })
+    end,
+    dependencies = {
+      "tpope/vim-repeat",
+    },
+  },
+  {
+    "ggandor/flit.nvim",
+    keys = function()
+      ---@type LazyKeys[]
+      local ret = {}
+      for _, key in ipairs { "f", "F", "t", "T" } do
+        ret[#ret + 1] = { key, mode = { "n", "x", "o" }, desc = key }
+      end
+      return ret
+    end,
+    opts = { labeled_modes = "nx" },
+    dependencies = {
+      "ggandor/leap.nvim",
+      dependencies = {
+        "tpope/vim-repeat",
+      },
+    },
+  },
+  { "kevinhwang91/nvim-bqf", ft = "qf", opts = {} },
+  { 'mrjones2014/smart-splits.nvim',
+    opts = {
+      ignored_filetypes = { "nofile", "quickfix", "qf", "prompt" },
+      ignored_buftypes = { "nofile" },
+    },
+  },
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "sindrets/diffview.nvim",        -- optional
+    },
+    config = true,
+    keys = {
+      { "<Leader>gt", "<cmd>Neogit<CR>", desc = "Open Neogit Tab Page" },
+      { "<Leader>gc", "<cmd>Neogit commit<CR>", desc = "Open Neogit Commit Page" },
+      { "<Leader>gd", ":Neogit cwd=", desc = "Open Neogit Override CWD" },
+      { "<Leader>gk", ":Neogit kind=", desc = "Open Neogit Override Kind" },
+    },
+  },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -282,7 +353,7 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
-vim.o.shiftwidth = 4
+vim.o.shiftwidth = 2
 vim.o.expandtab = true
 
 vim.cmd("colorscheme carbonfox")
@@ -629,3 +700,35 @@ require("clangd_extensions").setup({
     border = "none",
   },
 })
+-- resizing splits
+-- amount defaults to 3 if not specified
+-- use absolute values, no + or -
+-- the functions also check for a range,
+-- so for example if you bind `<A-h>` to `resize_left`,
+-- then `10<A-h>` will `resize_left` by `(10 * config.default_amount)`
+require('smart-splits').resize_up(3)
+require('smart-splits').resize_down(3)
+require('smart-splits').resize_left(3)
+require('smart-splits').resize_right(3)
+-- moving between splits
+-- You can override config.at_edge and
+-- config.move_cursor_same_row via opts
+-- See Configuration.
+require('smart-splits').move_cursor_up({ same_row = true, at_edge = 'wrap' })
+require('smart-splits').move_cursor_down()
+require('smart-splits').move_cursor_left()
+require('smart-splits').move_cursor_right()
+-- Swapping buffers directionally with the window to the specified direction
+require('smart-splits').swap_buf_up()
+require('smart-splits').swap_buf_down()
+require('smart-splits').swap_buf_left()
+require('smart-splits').swap_buf_right()
+-- the buffer swap functions can also take an `opts` table to override the
+-- default behavior of whether or not the cursor follows the buffer
+require('smart-splits').swap_buf_right({ move_cursor = true })
+-- persistent resize mode
+-- temporarily remap your configured resize keys to
+-- smart resize left, down, up, and right, respectively,
+-- press <ESC> to stop resize mode (unless you've set a different key in config)
+-- resize keys also accept a range, e.e. pressing `5j` will resize down 5 times the default_amount
+require('smart-splits').start_resize_mode()
