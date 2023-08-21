@@ -36,7 +36,7 @@ require('lazy').setup({
       {'L3MON4D3/LuaSnip'},     -- Required
     },
   },
-  { 
+  {
     "EdenEast/nightfox.nvim",
   }, -- lazy
   { 'folke/which-key.nvim',  opts = {} },
@@ -233,6 +233,7 @@ require('lazy').setup({
   },
   {
     'mrjones2014/smart-splits.nvim',
+    config = true,
     opts = {
       ignored_filetypes = { "nofile", "quickfix", "qf", "prompt" },
       ignored_buftypes = { "nofile" },
@@ -296,12 +297,6 @@ require('lazy').setup({
     },
   },
   { "kevinhwang91/nvim-bqf", ft = "qf", opts = {} },
-  { 'mrjones2014/smart-splits.nvim',
-    opts = {
-      ignored_filetypes = { "nofile", "quickfix", "qf", "prompt" },
-      ignored_buftypes = { "nofile" },
-    },
-  },
   {
     "NeogitOrg/neogit",
     dependencies = {
@@ -316,6 +311,11 @@ require('lazy').setup({
       { "<Leader>gk", ":Neogit kind=", desc = "Open Neogit Override Kind" },
     },
   },
+  {'junegunn/fzf.vim'},
+  {
+    "williamboman/mason.nvim",
+    config = true,
+  }
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -701,6 +701,7 @@ require("clangd_extensions").setup({
   },
 })
 -- resizing splits
+require('smart-splits').setup()
 -- amount defaults to 3 if not specified
 -- use absolute values, no + or -
 -- the functions also check for a range,
