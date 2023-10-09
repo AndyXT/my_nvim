@@ -60,16 +60,7 @@ require('lazy').setup({
       end,
     },
   },
-  {
-    -- Add indentation guides even on blank lines
-    'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help indent_blankline.txt`
-    opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
-    },
-  },
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
   -- Fuzzy Finder (files, lsp, etc)
@@ -94,19 +85,19 @@ require('lazy').setup({
     },
     config = function()
       require("telescope").setup({
-	extensions = {
-	  undo = {
-	    -- telescope-undo.nvim config, see below
-	    side_by_side = true,
-	    layout_strategy = "vertical",
-	    layout_config = {
-	      preview_height = 0.8,
-	    },
-	  },
-	}
+        extensions = {
+          undo = {
+            -- telescope-undo.nvim config, see below
+            side_by_side = true,
+            layout_strategy = "vertical",
+            layout_config = {
+              preview_height = 0.8,
+            },
+          },
+        }
       })
       require("telescope").load_extension("undo")
-      -- optional: vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
+      vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
     end,
   },
   {
@@ -311,11 +302,36 @@ require('lazy').setup({
       { "<Leader>gk", ":Neogit kind=", desc = "Open Neogit Override Kind" },
     },
   },
+  {'junegunn/fzf'},
   {'junegunn/fzf.vim'},
   {
     "williamboman/mason.nvim",
     config = true,
-  }
+  },
+  {
+    "scalameta/nvim-metals",
+  },
+  {
+    "ray-x/go.nvim",
+    dependencies = {  -- optional packages
+      "ray-x/guihua.lua",
+      "neovim/nvim-lspconfig",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      require("go").setup()
+    end,
+    event = {"CmdlineEnter"},
+    ft = {"go", 'gomod'},
+    build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
+  },
+  { "folke/neodev.nvim", opts = {} },
+  {
+    "NvChad/nvterm",
+    config = function ()
+      require("nvterm").setup()
+    end,
+  },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -394,9 +410,12 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
+-- vim.keymap.set('n', '<leader>m', require("telescope").extensions.metals.commands(), { desc = '[M]etals Command Menu' })
+
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+-- vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>b', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -531,6 +550,10 @@ capabilities.textDocument.completion.completionItem = {
     },
   },
 }
+
+require("neodev").setup({
+  -- add any options here, or leave empty to use the default settings
+})
 -- Setup language servers.
 local lspconfig = require "lspconfig"
 
@@ -544,6 +567,26 @@ lspconfig.lua_ls.setup {
     },
   },
 }
+
+-- local metals_config = require("metals").bare_config()
+local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "scala", "sbt", "java" },
+  callback = function()
+    require("metals").initialize_or_attach({})
+  end,
+  group = nvim_metals_group,
+})
+
+metals_config = require("metals").bare_config()
+metals_config.settings = {
+  showImplicitArguments = true,
+  excludedPackages = {
+    "akka.actor.typed.javadsl",
+    "com.github.swagger.akka.javadsl"
+  }
+}
+metals_config.init_options.statusBarProvider = "on"
 
 -- setup multiple servers with same default options
 local servers = { --[[ "rust_analyzer",  ]]"tsserver", "html", "cssls", "clangd" }
@@ -703,33 +746,89 @@ require("clangd_extensions").setup({
 -- resizing splits
 require('smart-splits').setup()
 -- amount defaults to 3 if not specified
--- use absolute values, no + or -
--- the functions also check for a range,
--- so for example if you bind `<A-h>` to `resize_left`,
--- then `10<A-h>` will `resize_left` by `(10 * config.default_amount)`
-require('smart-splits').resize_up(3)
-require('smart-splits').resize_down(3)
-require('smart-splits').resize_left(3)
-require('smart-splits').resize_right(3)
--- moving between splits
--- You can override config.at_edge and
--- config.move_cursor_same_row via opts
 -- See Configuration.
-require('smart-splits').move_cursor_up({ same_row = true, at_edge = 'wrap' })
-require('smart-splits').move_cursor_down()
-require('smart-splits').move_cursor_left()
-require('smart-splits').move_cursor_right()
--- Swapping buffers directionally with the window to the specified direction
-require('smart-splits').swap_buf_up()
-require('smart-splits').swap_buf_down()
-require('smart-splits').swap_buf_left()
-require('smart-splits').swap_buf_right()
--- the buffer swap functions can also take an `opts` table to override the
--- default behavior of whether or not the cursor follows the buffer
-require('smart-splits').swap_buf_right({ move_cursor = true })
--- persistent resize mode
--- temporarily remap your configured resize keys to
--- smart resize left, down, up, and right, respectively,
--- press <ESC> to stop resize mode (unless you've set a different key in config)
+vim.keymap.set('n', '<A-h>', require('smart-splits').resize_left)
+vim.keymap.set('n', '<A-j>', require('smart-splits').resize_down)
+vim.keymap.set('n', '<A-k>', require('smart-splits').resize_up)
+vim.keymap.set('n', '<A-l>', require('smart-splits').resize_right)
+-- moving between splits
+vim.keymap.set('n', '<C-h>', require('smart-splits').move_cursor_left)
+vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down)
+vim.keymap.set('n', '<C-k>', require('smart-splits').move_cursor_up)
+vim.keymap.set('n', '<C-l>', require('smart-splits').move_cursor_right)
+-- swapping buffers between windows
+vim.keymap.set('n', '<leader><leader>h', require('smart-splits').swap_buf_left)
+vim.keymap.set('n', '<leader><leader>j', require('smart-splits').swap_buf_down)
+vim.keymap.set('n', '<leader><leader>k', require('smart-splits').swap_buf_up)
+vim.keymap.set('n', '<leader><leader>l', require('smart-splits').swap_buf_right)
 -- resize keys also accept a range, e.e. pressing `5j` will resize down 5 times the default_amount
-require('smart-splits').start_resize_mode()
+-- require('smart-splits').start_resize_mode()
+require("nvterm").setup({
+  terminals = {
+    shell = vim.o.shell,
+    list = {},
+    type_opts = {
+      float = {
+        relative = 'editor',
+        row = 0.3,
+        col = 0.25,
+        width = 0.5,
+        height = 0.4,
+        border = "single",
+      },
+      horizontal = { location = "rightbelow", split_ratio = .3, },
+      vertical = { location = "rightbelow", split_ratio = .5 },
+    }
+  },
+  behavior = {
+    autoclose_on_quit = {
+      enabled = false,
+      confirm = true,
+    },
+    close_on_exit = true,
+    auto_insert = true,
+  },
+})
+-- require("nvterm").setup()
+
+local terminal = require("nvterm.terminal")
+
+local ft_cmds = {
+  python = "python3 " .. vim.fn.expand('%'),
+}
+local toggle_modes = {'n', 't'}
+local mappings = {
+  { 'n', '<C-l>', function () terminal.send(ft_cmds[vim.bo.filetype]) end },
+  { toggle_modes, '<A-h>', function () terminal.toggle('horizontal') end },
+  { toggle_modes, '<A-v>', function () terminal.toggle('vertical') end },
+  { toggle_modes, '<A-i>', function () terminal.toggle('float') end },
+}
+local opts = { noremap = true, silent = true }
+for _, mapping in ipairs(mappings) do
+  vim.keymap.set(mapping[1], mapping[2], mapping[3], opts)
+end
+
+local highlight = {
+    "RainbowRed",
+    "RainbowYellow",
+    "RainbowBlue",
+    "RainbowOrange",
+    "RainbowGreen",
+    "RainbowViolet",
+    "RainbowCyan",
+}
+
+local hooks = require "ibl.hooks"
+-- create the highlight groups in the highlight setup hook, so they are reset
+-- every time the colorscheme changes
+hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+    vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+    vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+    vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+    vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+    vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+    vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+    vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+end)
+
+require("ibl").setup { indent = { highlight = highlight } }
