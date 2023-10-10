@@ -341,6 +341,12 @@ require('lazy').setup({
       require("copilot").setup()
     end,
   },
+  {
+    "zbirenbaum/copilot-cmp",
+    config = function ()
+      require("copilot_cmp").setup()
+    end
+  },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -663,6 +669,12 @@ end
 local cmp = require("cmp")
 local lspkind = require('lspkind')
 
+local has_words_before = function()
+  if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
+end
+
 cmp.setup({
   snippet = {
     expand = function(args)
@@ -680,7 +692,7 @@ cmp.setup({
 
     -- luasnip
     ["<Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
+      if cmp.visible() and has_words_before() then
         cmp.select_next_item()
       elseif require("luasnip").expand_or_jumpable() then
         vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<Plug>luasnip-expand-or-jump", true, true, true), "")
@@ -705,6 +717,7 @@ cmp.setup({
       }),
   }),
   sources = cmp.config.sources({
+    { name = "copilot", group_index = 2 },
     { name = "nvim_lsp" },
     { name = "luasnip" },
     { name = "buffer" },
@@ -721,7 +734,8 @@ cmp.setup({
       -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
       before = function (entry, vim_item)
         return vim_item
-      end
+      end,
+      symbol_map = { Copilot = "" },
     })
   },
 })
@@ -912,7 +926,7 @@ require("ibl").setup { indent = { highlight = highlight } }
 
 require('copilot').setup({
   panel = {
-    enabled = true,
+    enabled = false,
     auto_refresh = true,
     keymap = {
       jump_prev = "[[",
@@ -927,7 +941,7 @@ require('copilot').setup({
     },
   },
   suggestion = {
-    enabled = true,
+    enabled = false,
     auto_trigger = false,
     debounce = 75,
     keymap = {
@@ -955,6 +969,12 @@ require('copilot').setup({
     svn = false,
     cvs = false,
     ["."] = false,
+    c = true,
+    go = true,
+    scala = true,
+    rust = true,
+    lua = true,
+    python = true,
   },
   copilot_node_command = 'node', -- Node.js version must be > 16.x
   server_opts_overrides = {},
