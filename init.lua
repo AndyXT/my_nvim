@@ -333,7 +333,14 @@ require('lazy').setup({
     end,
   },
   { "onsails/lspkind.nvim" },
-  { "github/copilot.vim" },
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup()
+    end,
+  },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -437,7 +444,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'scala' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -500,10 +507,10 @@ require('nvim-treesitter.configs').setup {
 }
 -- [[ Configure LSP ]]
 -- Global mappings.
-vim.keymap.set("n", "<space>e", vim.diagnostic.open_float)
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
-vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist)
+-- vim.keymap.set("n", "<space>e", vim.diagnostic.open_float)
+-- vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
+-- vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
+-- vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist)
 
 -- Use LspAttach autocommand to only map the following keys
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -902,3 +909,53 @@ hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
 end)
 
 require("ibl").setup { indent = { highlight = highlight } }
+
+require('copilot').setup({
+  panel = {
+    enabled = true,
+    auto_refresh = true,
+    keymap = {
+      jump_prev = "[[",
+      jump_next = "]]",
+      accept = "<CR>",
+      refresh = "gr",
+      open = "<M-CR>"
+    },
+    layout = {
+      position = "bottom", -- | top | left | right
+      ratio = 0.4
+    },
+  },
+  suggestion = {
+    enabled = true,
+    auto_trigger = false,
+    debounce = 75,
+    keymap = {
+      accept = "<Tab>",
+      accept_word = false,
+      accept_line = false,
+      next = "<C-l>",
+      prev = "<C-h>",
+      dismiss = "<C-q>",
+      -- accept = "<M-l>",
+      -- accept_word = false,
+      -- accept_line = false,
+      -- next = "<M-]>",
+      -- prev = "<M-[>",
+      -- dismiss = "<C-]>",
+    },
+  },
+  filetypes = {
+    yaml = false,
+    markdown = false,
+    help = false,
+    gitcommit = false,
+    gitrebase = false,
+    hgcommit = false,
+    svn = false,
+    cvs = false,
+    ["."] = false,
+  },
+  copilot_node_command = 'node', -- Node.js version must be > 16.x
+  server_opts_overrides = {},
+})
