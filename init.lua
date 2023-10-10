@@ -17,7 +17,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   {
     'VonHeikemen/lsp-zero.nvim',
-    branch = 'v2.x',
+    branch = 'v3.x',
     dependencies = {
       -- LSP Support
       {'neovim/nvim-lspconfig'},             -- Required
@@ -332,6 +332,7 @@ require('lazy').setup({
       require("nvterm").setup()
     end,
   },
+  { "onsails/lspkind.nvim" },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -410,7 +411,7 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
--- vim.keymap.set('n', '<leader>m', require("telescope").extensions.metals.commands(), { desc = '[M]etals Command Menu' })
+vim.keymap.set('n', '<leader>m', '<cmd> lua require("telescope").extensions.metals.commands()<CR>', { desc = '[M]etals Command Menu' })
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
@@ -589,7 +590,7 @@ metals_config.settings = {
 metals_config.init_options.statusBarProvider = "on"
 
 -- setup multiple servers with same default options
-local servers = { --[[ "rust_analyzer",  ]]"tsserver", "html", "cssls", "clangd" }
+local servers = { --[[ "rust_analyzer",  ]]"tsserver", "html", "cssls", "clangd", "gopls" }
 
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
@@ -600,6 +601,7 @@ end
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require("cmp")
+local lspkind = require('lspkind')
 
 cmp.setup({
   snippet = {
@@ -647,6 +649,19 @@ cmp.setup({
     { name = "nvim_lua" },
     { name = "path" },
   }),
+  formatting = {
+    format = lspkind.cmp_format({
+      mode = 'symbol', -- show only symbol annotations
+      maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+      ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+
+      -- The function below will be called before any actual modifications from lspkind
+      -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
+      before = function (entry, vim_item)
+        return vim_item
+      end
+    })
+  },
 })
 local rt = require("rust-tools")
 
