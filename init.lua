@@ -360,6 +360,39 @@ require('lazy').setup({
       require("refactoring").setup()
     end,
   },
+  { "hrsh7th/cmp-buffer" },
+  { "hrsh7th/cmp-cmdline" },
+  { "hrsh7th/cmp-path" },
+  { "j-hui/fidget.nvim" },
+  { "folke/lsp-colors.nvim" },
+  { "rafamadriz/friendly-snippets" },
+  { "nvim-pack/nvim-spectre" },
+  {
+    'nvim-orgmode/orgmode',
+    dependencies = {
+      { 'nvim-treesitter/nvim-treesitter', lazy = true },
+    },
+    event = 'VeryLazy',
+    config = function()
+      -- Load treesitter grammar for org
+      require('orgmode').setup_ts_grammar()
+
+      -- Setup treesitter
+      require('nvim-treesitter.configs').setup({
+        highlight = {
+          enable = true,
+          additional_vim_regex_highlighting = { 'org' },
+        },
+        ensure_installed = { 'org' },
+      })
+
+      -- Setup orgmode
+      require('orgmode').setup({
+        org_agenda_files = '~/orgfiles/**/*',
+        org_default_notes_file = '~/orgfiles/refile.org',
+      })
+    end,
+  }
 })
 -- Set highlight on search
 vim.o.hlsearch = false
