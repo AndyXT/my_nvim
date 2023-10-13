@@ -395,7 +395,8 @@ require('lazy').setup({
   },
   { 'echasnovski/mini.nvim', version = false },
   { 'saadparwaiz1/cmp_luasnip' },
-	{ 'hrsh7th/cmp-nvim-lua' },
+  { 'hrsh7th/cmp-nvim-lua' },
+  { 'akinsho/git-conflict.nvim', version = "*", config = true },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
