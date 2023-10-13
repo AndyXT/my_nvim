@@ -402,6 +402,35 @@ require('lazy').setup({
     opts = {},
   },
   { 'krady21/compiler-explorer.nvim' },
+  {
+    "elixir-tools/elixir-tools.nvim",
+    version = "*",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      local elixir = require("elixir")
+      local elixirls = require("elixir.elixirls")
+
+      elixir.setup {
+        nextls = {enable = true},
+        credo = {},
+        elixirls = {
+          enable = true,
+          settings = elixirls.settings {
+            dialyzerEnabled = false,
+            enableTestLenses = false,
+          },
+          on_attach = function(client, bufnr)
+            vim.keymap.set("n", "<space>fp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
+            vim.keymap.set("n", "<space>tp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
+            vim.keymap.set("v", "<space>em", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
+          end,
+        }
+      }
+    end,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+  },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -491,7 +520,6 @@ vim.keymap.set('n', '<leader>m', '<cmd> lua require("telescope").extensions.meta
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
--- vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>b', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
@@ -574,12 +602,6 @@ require('nvim-treesitter.configs').setup {
   },
 }
 -- [[ Configure LSP ]]
--- Global mappings.
--- vim.keymap.set("n", "<space>e", vim.diagnostic.open_float)
--- vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
--- vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
--- vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist)
-
 require("neodev").setup({
   -- add any options here, or leave empty to use the default settings
 })
@@ -590,33 +612,6 @@ lsp_zero.extend_lspconfig()
 lsp_zero.on_attach(function(client, bufnr)
   lsp_zero.default_keymaps({buffer = bufnr})
 end)
--- Use LspAttach autocommand to only map the following keys
-vim.api.nvim_create_autocmd("LspAttach", {
-  group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-  callback = function(ev)
-    -- Enable completion triggered by <c-x><c-o>
-    vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
-
-    local opts = { buffer = ev.buf }
-    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-    vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-    vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-    vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
-    vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, opts)
-    vim.keymap.set("n", "<space>wl", function()
-      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, opts)
-    vim.keymap.set("n", "<space>D", vim.lsp.buf.type_definition, opts)
-    vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
-    vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, opts)
-    vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-    vim.keymap.set("n", "<space>f", function()
-      vim.lsp.buf.format { async = true }
-    end, opts)
-  end,
-})
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
@@ -690,10 +685,25 @@ local on_attach = function(_, bufnr)
     vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
 end
+
+-- document existing key chains
+require('which-key').register {
+  ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
+  ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+  ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
+  ['<leader>h'] = { name = '[H]arpoon', _ = 'which_key_ignore' },
+  ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
+  ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+  ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+  ['<leader>o'] = { name = '[O]rgmode', _ = 'which_key_ignore' },
+  ['<leader>x'] = { name = '[T]rouble', _ = 'which_key_ignore' },
+}
+
 local lspconfig = require "lspconfig"
 
 lspconfig.lua_ls.setup {
   capabilities = capabilities,
+  on_attach = on_attach,
   settings = {
     Lua = {
       diagnostics = {
@@ -701,6 +711,12 @@ lspconfig.lua_ls.setup {
       },
     },
   },
+}
+
+lspconfig.elixirls.setup {
+  capabilities = capabilities,
+  on_attach = on_attach,
+  cmd = { "/home/axtreto/elixir/bin/language_server.sh" },
 }
 
 -- local metals_config = require("metals").bare_config()
@@ -1075,13 +1091,6 @@ vim.keymap.set("n", "<leader>rb", function() require('refactoring').refactor('Ex
 vim.keymap.set("n", "<leader>rbf", function() require('refactoring').refactor('Extract Block To File') end, { desc = 'Extract Block To File' })
 -- Extract block supports only normal mode
 
--- vim.keymap.set(
---   {"n", "x"},
---   "<leader>rr",
---   function() require('refactoring').select_refactor() end,
---   { desc = 'Select Refactor Menu' }
--- )
-
 -- load refactoring Telescope extension
 require("telescope").load_extension("refactoring")
 
@@ -1108,3 +1117,7 @@ vim.keymap.set({"x", "n"}, "<leader>rv", function() require('refactoring').debug
 
 vim.keymap.set("n", "<leader>rc", function() require('refactoring').debug.cleanup({}) end, { desc = 'Debug Cleanup' })
 -- Supports only normal mode
+
+require("mini.pick").setup()
+
+require("elixir").setup()
