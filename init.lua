@@ -401,6 +401,7 @@ require('lazy').setup({
     'stevearc/dressing.nvim',
     opts = {},
   },
+  { 'krady21/compiler-explorer.nvim' },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
