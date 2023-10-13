@@ -497,7 +497,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'scala' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'scala', 'elixir' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -565,6 +565,10 @@ require('nvim-treesitter.configs').setup {
 -- vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
 -- vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist)
 
+require("neodev").setup({
+  -- add any options here, or leave empty to use the default settings
+})
+
 local lsp_zero = require('lsp-zero')
 lsp_zero.extend_lspconfig()
 
@@ -620,9 +624,6 @@ capabilities.textDocument.completion.completionItem = {
   },
 }
 
-require("neodev").setup({
-  -- add any options here, or leave empty to use the default settings
-})
 -- Setup language servers.
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
