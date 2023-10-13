@@ -397,6 +397,10 @@ require('lazy').setup({
   { 'saadparwaiz1/cmp_luasnip' },
   { 'hrsh7th/cmp-nvim-lua' },
   { 'akinsho/git-conflict.nvim', version = "*", config = true },
+  {
+    'stevearc/dressing.nvim',
+    opts = {},
+  },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
