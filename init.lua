@@ -1119,5 +1119,6 @@ vim.keymap.set("n", "<leader>rc", function() require('refactoring').debug.cleanu
 -- Supports only normal mode
 
 require("mini.pick").setup()
+require('mini.statusline').setup()
 
 require("elixir").setup()
