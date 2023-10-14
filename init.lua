@@ -371,6 +371,27 @@ require('lazy').setup({
     'nvim-orgmode/orgmode',
     dependencies = {
       { 'nvim-treesitter/nvim-treesitter', lazy = true },
+      { "akinsho/org-bullets.nvim" },
+      {
+        'lukas-reineke/headlines.nvim',
+        dependencies = "nvim-treesitter/nvim-treesitter",
+        config = true, -- or `opts = {}`
+      },
+      {
+        "michaelb/sniprun",
+        branch = "master",
+
+        build = "sh install.sh",
+        -- do 'sh install.sh 1' if you want to force compile locally
+        -- (instead of fetching a binary from the github release). Requires Rust >= 1.65
+
+        config = function()
+          require("sniprun").setup({
+            -- your options
+          })
+        end,
+      },
+      { "dhruvasagar/vim-table-mode" },
     },
     event = 'VeryLazy',
     config = function()
@@ -540,7 +561,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'scala', 'elixir' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'scala', 'elixir', 'heex' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -997,20 +1018,20 @@ local highlight = {
     "RainbowCyan",
 }
 
-local hooks = require "ibl.hooks"
+-- local hooks = require "ibl.hooks"
 -- create the highlight groups in the highlight setup hook, so they are reset
 -- every time the colorscheme changes
-hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-    vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
-    vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
-    vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
-    vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
-    vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
-    vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
-    vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
-end)
+-- hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+--     vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+--     vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+--     vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+--     vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+--     vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+--     vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+--     vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+-- end)
 
-require("ibl").setup { indent = { highlight = highlight } }
+require("ibl").setup { --[[ indent = { highlight = highlight } ]] }
 
 require('copilot').setup({
   panel = {
@@ -1122,3 +1143,5 @@ require("mini.pick").setup()
 require('mini.statusline').setup()
 
 require("elixir").setup()
+require('org-bullets').setup()
+require("headlines").setup()
