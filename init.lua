@@ -452,6 +452,22 @@ require('lazy').setup({
       "nvim-lua/plenary.nvim",
     },
   },
+  {
+    "jackMort/ChatGPT.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("chatgpt").setup({
+        -- async_api_key_cmd = "pass show openai/api"
+      })
+    end,
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim"
+    }
+  },
+  { 'mbbill/undotree' },
+  { 'yorickpeterse/nvim-pqf' },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -1145,3 +1161,4 @@ require('mini.statusline').setup()
 require("elixir").setup()
 require('org-bullets').setup()
 require("headlines").setup()
+require('pqf').setup()
