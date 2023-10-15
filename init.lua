@@ -468,6 +468,7 @@ require('lazy').setup({
   },
   { 'mbbill/undotree' },
   { 'yorickpeterse/nvim-pqf' },
+  { "3rd/image.nvim" },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -1162,3 +1163,5 @@ require("elixir").setup()
 require('org-bullets').setup()
 require("headlines").setup()
 require('pqf').setup()
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?/init.lua;"
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?.lua;"
