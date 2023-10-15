@@ -469,6 +469,7 @@ require('lazy').setup({
   { 'mbbill/undotree' },
   { 'yorickpeterse/nvim-pqf' },
   { "3rd/image.nvim" },
+  { "nyoom-engineering/oxocarbon.nvim" },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
