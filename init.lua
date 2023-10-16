@@ -288,6 +288,7 @@ require('lazy').setup({
     },
   },
   { "kevinhwang91/nvim-bqf", ft = "qf", opts = {} },
+  { 'yorickpeterse/nvim-pqf' },
   {
     "NeogitOrg/neogit",
     dependencies = {
@@ -779,7 +780,7 @@ metals_config.settings = {
 metals_config.init_options.statusBarProvider = "on"
 
 -- setup multiple servers with same default options
-local servers = { --[[ "rust_analyzer",  ]]"tsserver", "html", "cssls", "clangd", "gopls" }
+local servers = { --[[ "rust_analyzer",  ]]"tsserver", "html", "cssls", "clangd", "gopls"--[[ , "sourcekit" ]] }
 
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
@@ -1166,3 +1167,5 @@ require("headlines").setup()
 require('pqf').setup()
 package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?/init.lua;"
 package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?.lua;"
+
+require('pqf').setup()
