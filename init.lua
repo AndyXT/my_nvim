@@ -471,6 +471,7 @@ require('lazy').setup({
   { 'yorickpeterse/nvim-pqf' },
   { "3rd/image.nvim" },
   { "nyoom-engineering/oxocarbon.nvim" },
+  { "bluz71/vim-moonfly-colors", name = "moonfly", lazy = false, priority = 1000 },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -512,7 +513,8 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.o.expandtab = true
 
-vim.cmd("colorscheme carbonfox")
+-- vim.cmd("colorscheme carbonfox")
+vim.cmd("colorscheme moonfly")
 -- vim.o.background = hard
 -- Save undo history
 vim.opt.swapfile = false

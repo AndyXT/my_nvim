@@ -38,6 +38,7 @@
   "lspkind.nvim": { "branch": "master", "commit": "57610d5ab560c073c465d6faf0c19f200cb67e6e" },
   "mason.nvim": { "branch": "main", "commit": "cd7835b15f5a4204fc37e0aa739347472121a54c" },
   "mini.nvim": { "branch": "main", "commit": "22f3f4396b4ec90c4c83b69f47e14d71b4c6c69f" },
+  "moonfly": { "branch": "master", "commit": "cd106f532a1573a6c5de951682fd05d7e732ac84" },
   "neo-tree.nvim": { "branch": "v3.x", "commit": "6f8c49956c89e9fefae6acdfe1d57c6293b0a03d" },
   "neodev.nvim": { "branch": "main", "commit": "24b403eabde652904077f84fd55441744e77a109" },
   "neogit": { "branch": "master", "commit": "9ef72fd47489afb2b1b634140cee97febbd03261" },
