@@ -472,6 +472,7 @@ require('lazy').setup({
   { "nyoom-engineering/oxocarbon.nvim" },
   { "bluz71/vim-moonfly-colors", name = "moonfly", lazy = false, priority = 1000 },
   { "chentoast/marks.nvim" },
+  { "ellisonleao/gruvbox.nvim", priority = 1000 , config = true, opts = {} },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -514,8 +515,8 @@ vim.opt.shiftwidth = 4
 vim.o.expandtab = true
 
 -- vim.cmd("colorscheme carbonfox")
-vim.cmd("colorscheme moonfly")
--- vim.o.background = hard
+vim.cmd("colorscheme gruvbox")
+vim.o.background = "dark"
 -- Save undo history
 vim.opt.swapfile = false
 vim.opt.backup = false
@@ -1168,3 +1169,28 @@ package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/shar
 
 require('pqf').setup()
 require('marks').setup()
+-- Default options:
+require("gruvbox").setup({
+  terminal_colors = true, -- add neovim terminal colors
+  undercurl = true,
+  underline = true,
+  bold = true,
+  italic = {
+    strings = true,
+    emphasis = true,
+    comments = true,
+    operators = false,
+    folds = true,
+  },
+  strikethrough = true,
+  invert_selection = false,
+  invert_signs = false,
+  invert_tabline = false,
+  invert_intend_guides = false,
+  inverse = true, -- invert background for search, diffs, statuslines and errors
+  contrast = "hard", -- can be "hard", "soft" or empty string
+  palette_overrides = {},
+  overrides = {},
+  dim_inactive = false,
+  transparent_mode = false,
+})
