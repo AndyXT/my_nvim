@@ -515,7 +515,6 @@ vim.opt.shiftwidth = 4
 vim.o.expandtab = true
 
 -- vim.cmd("colorscheme carbonfox")
-vim.cmd("colorscheme gruvbox")
 vim.o.background = "dark"
 -- Save undo history
 vim.opt.swapfile = false
@@ -1194,3 +1193,4 @@ require("gruvbox").setup({
   dim_inactive = false,
   transparent_mode = false,
 })
+vim.cmd("colorscheme gruvbox")
