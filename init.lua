@@ -309,9 +309,8 @@ require('lazy').setup({
     "williamboman/mason.nvim",
     config = true,
   },
-  {
-    "scalameta/nvim-metals",
-  },
+  { "williamboman/mason-lspconfig.nvim" },
+  { "scalameta/nvim-metals", },
   {
     "ray-x/go.nvim",
     dependencies = {  -- optional packages
@@ -472,6 +471,7 @@ require('lazy').setup({
   { "3rd/image.nvim" },
   { "nyoom-engineering/oxocarbon.nvim" },
   { "bluz71/vim-moonfly-colors", name = "moonfly", lazy = false, priority = 1000 },
+  { "chentoast/marks.nvim" },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -643,13 +643,32 @@ require('nvim-treesitter.configs').setup {
     },
   },
 }
+
+local lsp_zero = require('lsp-zero')
+lsp_zero.extend_lspconfig()
+
+require("mason").setup()
+require("mason-lspconfig").setup({
+    ensure_installed = { "lua_ls", "rust_analyzer", "gopls" },
+})
+require("mason-lspconfig").setup_handlers {
+    -- The first entry (without a key) will be the default handler
+    -- and will be called for each installed server that doesn't have
+    -- a dedicated handler.
+    function (server_name) -- default handler (optional)
+        require("lspconfig")[server_name].setup {}
+    end,
+    -- Next, you can provide a dedicated handler for specific servers.
+    -- For example, a handler override for the `rust_analyzer`:
+    -- ["rust_analyzer"] = function ()
+    --     require("rust-tools").setup {}
+    -- end
+}
+
 -- [[ Configure LSP ]]
 require("neodev").setup({
   -- add any options here, or leave empty to use the default settings
 })
-
-local lsp_zero = require('lsp-zero')
-lsp_zero.extend_lspconfig()
 
 lsp_zero.on_attach(function(client, bufnr)
   lsp_zero.default_keymaps({buffer = bufnr})
@@ -1029,29 +1048,6 @@ for _, mapping in ipairs(mappings) do
   vim.keymap.set(mapping[1], mapping[2], mapping[3], opts)
 end
 
-local highlight = {
-    "RainbowRed",
-    "RainbowYellow",
-    "RainbowBlue",
-    "RainbowOrange",
-    "RainbowGreen",
-    "RainbowViolet",
-    "RainbowCyan",
-}
-
--- local hooks = require "ibl.hooks"
--- create the highlight groups in the highlight setup hook, so they are reset
--- every time the colorscheme changes
--- hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
---     vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
---     vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
---     vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
---     vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
---     vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
---     vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
---     vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
--- end)
-
 require("ibl").setup { --[[ indent = { highlight = highlight } ]] }
 
 require('copilot').setup({
@@ -1171,3 +1167,4 @@ package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/shar
 package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?.lua;"
 
 require('pqf').setup()
+require('marks').setup()
