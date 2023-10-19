@@ -473,6 +473,11 @@ require('lazy').setup({
   { "bluz71/vim-moonfly-colors", name = "moonfly", lazy = false, priority = 1000 },
   { "chentoast/marks.nvim" },
   { "ellisonleao/gruvbox.nvim", priority = 1000 , config = true, opts = {} },
+  { 'tpope/vim-fugitive' },
+  {
+    "nvim-telescope/telescope-file-browser.nvim",
+    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+  },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -513,6 +518,13 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.o.expandtab = true
+
+vim.cmd([[augroup luaindent
+  autocmd FileType lua setlocal expandtab
+  autocmd FileType lua setlocal tabstop=2
+  autocmd FileType lua setlocal softtabstop=2
+  autocmd FileType lua setlocal shiftwidth=2
+augroup END]])
 
 -- vim.cmd("colorscheme carbonfox")
 vim.o.background = "dark"
@@ -888,6 +900,24 @@ cmp.setup({
     })
   },
 })
+
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+      { name = 'cmdline' }
+    })
+})
+
 local rt = require("rust-tools")
 
 rt.setup({
@@ -1108,10 +1138,10 @@ require('copilot').setup({
 
 require("telescope").load_extension('harpoon')
 
-vim.keymap.set("n", "<leader>ha", "", { desc = 'Harpoon' })
 vim.keymap.set("n", "<leader>ha", function() require("harpoon.mark").add_file() end, { desc = 'Add File' })
 vim.keymap.set("n", "<leader>hm", function() require("harpoon.ui").toggle_quick_menu() end, { desc = 'Toggle Menu' })
-
+vim.keymap.set("n", "<leader>hn", function() require("harpoon.ui").nav_next() end, { desc = '[N]ext  File' })
+vim.keymap.set("n", "<leader>hp", function() require("harpoon.ui").nav_prev() end, { desc = '[P]revious File' })
 
 require('refactoring').setup({})
 
@@ -1194,3 +1224,6 @@ require("gruvbox").setup({
   transparent_mode = false,
 })
 vim.cmd("colorscheme gruvbox")
+
+require("telescope").load_extension "file_browser"
+vim.keymap.set("n", "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", { desc = 'Debug Cleanup' })
