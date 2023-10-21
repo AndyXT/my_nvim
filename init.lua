@@ -594,7 +594,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'scala', 'elixir', 'heex' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'scala', 'elixir', 'heex', 'kotlin', 'fennel' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -1213,6 +1213,9 @@ vim.keymap.set("n", "<leader>rc", function() require('refactoring').debug.cleanu
 
 require("mini.pick").setup()
 require('mini.statusline').setup()
+require('mini.doc').setup()
+require('mini.starter').setup()
+require('mini.sessions').setup()
 
 require("elixir").setup()
 require('org-bullets').setup()
@@ -1248,7 +1251,7 @@ require("gruvbox").setup({
   dim_inactive = false,
   transparent_mode = false,
 })
-vim.cmd("colorscheme gruvbox")
+vim.cmd("colorscheme minischeme")
 
 require("telescope").load_extension "file_browser"
 vim.keymap.set("n", "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", { desc = 'Debug Cleanup' })
