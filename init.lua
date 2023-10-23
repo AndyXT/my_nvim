@@ -478,6 +478,11 @@ require('lazy').setup({
     "nvim-telescope/telescope-file-browser.nvim",
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
   },
+  { "sindrets/diffview.nvim", }, -- optional
+  { "leoluz/nvim-dap-go" },
+  { "mfussenegger/nvim-dap" },
+  { "theHamsta/nvim-dap-virtual-text" },
+  { "rcarriga/nvim-dap-ui" },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -680,6 +685,7 @@ require("mason-lspconfig").setup_handlers {
 -- [[ Configure LSP ]]
 require("neodev").setup({
   -- add any options here, or leave empty to use the default settings
+  library = { plugins = { "nvim-dap-ui" }, types = true },
 })
 
 lsp_zero.on_attach(function(client, bufnr)
@@ -1255,3 +1261,6 @@ vim.cmd("colorscheme minischeme")
 
 require("telescope").load_extension "file_browser"
 vim.keymap.set("n", "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", { desc = 'File Browser Buffer CWD' })
+
+require('dap-go').setup()
+require("nvim-dap-virtual-text").setup()
