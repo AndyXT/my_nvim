@@ -844,7 +844,7 @@ metals_config.settings = {
 metals_config.init_options.statusBarProvider = "on"
 
 -- setup multiple servers with same default options
-local servers = { --[[ "rust_analyzer",  ]]"tsserver", "html", "cssls", "clangd", "gopls", "mojo"--[[ , "sourcekit" ]] }
+local servers = { --[[ "rust_analyzer",  ]]"tsserver", "lua_ls", "html", "cssls", "clangd", "gopls", "mojo"--[[ , "sourcekit" ]] }
 
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
