@@ -81,5 +81,8 @@
         "/Users/andrestreto/.local/share/my_nvim/lazy/plenary.nvim/lua",
         "/Users/andrestreto/.local/share/my_nvim/lazy/lsp-zero.nvim/lua",
         "${3rd}/luv/library"
+    ],
+    "diagnostics.globals": [
+        "metals_config"
     ]
 }

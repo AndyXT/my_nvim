@@ -827,7 +827,7 @@ vim.api.nvim_create_autocmd("FileType", {
   group = nvim_metals_group,
 })
 
-metals_config = require("metals").bare_config()
+local metals_config = require("metals").bare_config()
 metals_config.settings = {
   showImplicitArguments = true,
   excludedPackages = {
@@ -838,7 +838,7 @@ metals_config.settings = {
 metals_config.init_options.statusBarProvider = "on"
 
 -- setup multiple servers with same default options
-local servers = { --[[ "rust_analyzer",  ]]"tsserver", "html", "cssls", "clangd", "gopls"--[[ , "sourcekit" ]] }
+local servers = { --[[ "rust_analyzer",  ]]"tsserver", "html", "cssls", "clangd", "gopls", "mojo"--[[ , "sourcekit" ]] }
 
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
@@ -1254,4 +1254,4 @@ require("gruvbox").setup({
 vim.cmd("colorscheme minischeme")
 
 require("telescope").load_extension "file_browser"
-vim.keymap.set("n", "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", { desc = 'Debug Cleanup' })
+vim.keymap.set("n", "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", { desc = 'File Browser Buffer CWD' })
