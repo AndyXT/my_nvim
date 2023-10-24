@@ -483,10 +483,68 @@ require('lazy').setup({
   { "mfussenegger/nvim-dap" },
   { "theHamsta/nvim-dap-virtual-text" },
   { "rcarriga/nvim-dap-ui" },
+  {
+    "rcarriga/cmp-dap",
+    config = function(_, opts)
+      require("cmp").setup {
+        enabled = function()
+          return vim.api.nvim_buf_get_option(0, "buftype") ~= "prompt" or require("cmp_dap").is_dap_buffer()
+        end,
+      }
+      require("cmp").setup.filetype({
+        "dap-repl",
+        "dapui_watches",
+        "dapui_hover",
+      }, {
+          sources = {
+            { name = "dap" },
+          }
+        })
+    end,
+  },
   { "Olical/aniseed" },
-  { "Olical/conjure" },
+  {
+    "Olical/conjure",
+    -- ft = { "clojure", "fennel", "python" }, -- etc
+    -- dependencies = {
+    --   {
+    --     "PaterJason/cmp-conjure",
+    --     config = function()
+    --       local cmp = require("cmp")
+    --       local config = cmp.get_config()
+    --       table.insert (config.sources, {
+    --         name = "buffer",
+    --         option = {
+    --           sources = {
+    --             name = "conjure"
+    --           },
+    --         },
+    --       })
+    --       cmp.setup(config)
+    --     end,
+    --   },
+    -- },
+    -- config = function(_, opts)
+    --   require("conjure.main").main()
+    --   require("conjure. mapping")["on-filetype"]()
+    -- end,
+    -- init = function()
+    --   vim.g["conjure#debug"] = true
+    -- end,
+  },
   { 'bakpakin/fennel.vim' },
   { "PaterJason/cmp-conjure" },
+  { 'gpanders/nvim-parinfer' },
+  { "mg979/vim-visual-multi" },
+  {
+    "max397574/better-escape.nvim",
+    config = function()
+      require("better_escape").setup {
+      }
+    end,
+  },
+  { "rktjmp/hotpot.nvim" },
+  { "Olical/nfnl" },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -669,23 +727,6 @@ local lsp_zero = require('lsp-zero')
 lsp_zero.extend_lspconfig()
 
 require("mason").setup()
-require("mason-lspconfig").setup({
-    ensure_installed = { "lua_ls", "rust_analyzer", "gopls", "fennel_language_server" },
-})
-require("mason-lspconfig").setup_handlers {
-    -- The first entry (without a key) will be the default handler
-    -- and will be called for each installed server that doesn't have
-    -- a dedicated handler.
-    function (server_name) -- default handler (optional)
-        require("lspconfig")[server_name].setup {}
-    end,
-    -- Next, you can provide a dedicated handler for specific servers.
-    -- For example, a handler override for the `rust_analyzer`:
-    -- ["rust_analyzer"] = function ()
-    --     require("rust-tools").setup {}
-    -- end
-}
-
 -- [[ Configure LSP ]]
 require("neodev").setup({
   -- add any options here, or leave empty to use the default settings
@@ -768,6 +809,26 @@ local on_attach = function(_, bufnr)
     vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
 end
+
+require("mason-lspconfig").setup({
+    ensure_installed = { "lua_ls", "rust_analyzer", "gopls", "fennel_language_server" },
+})
+require("mason-lspconfig").setup_handlers {
+    -- The first entry (without a key) will be the default handler
+    -- and will be called for each installed server that doesn't have
+  -- a dedicated handler.
+  function (server_name) -- default handler (optional)
+    require("lspconfig")[server_name].setup {
+      on_attach = on_attach,
+      capabilities = capabilities,
+    }
+  end,
+    -- Next, you can provide a dedicated handler for specific servers.
+    -- For example, a handler override for the `rust_analyzer`:
+    -- ["rust_analyzer"] = function ()
+    --     require("rust-tools").setup {}
+    -- end
+}
 
 -- document existing key chains
 require('which-key').register {
