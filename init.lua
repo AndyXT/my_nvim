@@ -1,5 +1,5 @@
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = '\\'
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -483,6 +483,10 @@ require('lazy').setup({
   { "mfussenegger/nvim-dap" },
   { "theHamsta/nvim-dap-virtual-text" },
   { "rcarriga/nvim-dap-ui" },
+  { "Olical/aniseed" },
+  { "Olical/conjure" },
+  { 'bakpakin/fennel.vim' },
+  { "PaterJason/cmp-conjure" },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -666,7 +670,7 @@ lsp_zero.extend_lspconfig()
 
 require("mason").setup()
 require("mason-lspconfig").setup({
-    ensure_installed = { "lua_ls", "rust_analyzer", "gopls" },
+    ensure_installed = { "lua_ls", "rust_analyzer", "gopls", "fennel_language_server" },
 })
 require("mason-lspconfig").setup_handlers {
     -- The first entry (without a key) will be the default handler
@@ -915,6 +919,7 @@ cmp.setup({
     { name = "buffer" },
     { name = "nvim_lua" },
     { name = "path" },
+    { name = "conjure" },
   }),
   formatting = {
     format = lspkind.cmp_format({
