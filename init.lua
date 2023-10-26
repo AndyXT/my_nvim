@@ -545,6 +545,11 @@ require('lazy').setup({
   },
   { "rktjmp/hotpot.nvim" },
   { "Olical/nfnl" },
+  -- { "airblade/vim-gitgutter" },
+  { "tpope/vim-sexp-mappings-for-regular-people" },
+  { "marko-cerovac/material.nvim" },
+  { "tpope/vim-dispatch" },
+  { "radenling/vim-dispatch-neovim" },
 })
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -1323,7 +1328,7 @@ require("gruvbox").setup({
   dim_inactive = false,
   transparent_mode = false,
 })
-vim.cmd("colorscheme minischeme")
+vim.cmd("colorscheme material-deep-ocean")
 
 require("telescope").load_extension "file_browser"
 vim.keymap.set("n", "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", { desc = 'File Browser Buffer CWD' })
